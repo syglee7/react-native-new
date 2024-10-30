@@ -22,8 +22,6 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import {getDateWithSeparator} from '@/utils';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {FeedStackParamList} from '@/navigations/stack/FeedStackNavigator.tsx';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {MainDrawerParamList} from '@/navigations/drawer/MainDrawerNavigator.tsx';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
