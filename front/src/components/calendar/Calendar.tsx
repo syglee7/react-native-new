@@ -1,18 +1,26 @@
 import React from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import {FlatList, Pressable, StyleSheet, Text, View} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {colors} from '@/constants';
 import DayOfWeeks from '@/components/calendar/DayOfWeeks.tsx';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {MonthYear} from '@/utils';
+import {isSameAsCurrentDate, MonthYear} from '@/utils';
+import DateBox from '@/components/calendar/DateBox.tsx';
 
 interface CalendarProps {
   monthYear: MonthYear;
   onChangeMonth: (increment: number) => void;
+  selectedDate: number;
+  onPressDate: (date: number) => void;
 }
 
-function Calendar({monthYear, onChangeMonth}: CalendarProps) {
-  const {month, year} = monthYear;
+function Calendar({
+  monthYear,
+  onChangeMonth,
+  selectedDate,
+  onPressDate,
+}: CalendarProps) {
+  const {month, year, lastDate, firstDOW} = monthYear;
   return (
     <>
       <View style={styles.headerContainer}>
@@ -38,6 +46,24 @@ function Calendar({monthYear, onChangeMonth}: CalendarProps) {
         </Pressable>
       </View>
       <DayOfWeeks />
+      <View style={styles.bodyContainer}>
+        <FlatList
+          data={Array.from({length: lastDate + firstDOW}, (_, i) => ({
+            id: i,
+            date: i - firstDOW + 1,
+          }))}
+          renderItem={({item}) => (
+            <DateBox
+              date={item.date}
+              isToday={isSameAsCurrentDate(year, month, item.date)}
+              selectedDate={selectedDate}
+              onPressDate={onPressDate}
+            />
+          )}
+          keyExtractor={(item) => String(item.id)}
+          numColumns={7}
+        />
+      </View>
     </>
   );
 }
@@ -49,6 +75,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginHorizontal: 25,
     marginVertical: 16,
+  },
+  bodyContainer: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.GRAY_300,
+    backgroundColor: colors.GRAY_100,
   },
   monthButtonContainer: {
     padding: 10,
