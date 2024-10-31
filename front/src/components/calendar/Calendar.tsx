@@ -7,6 +7,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {isSameAsCurrentDate, MonthYear} from '@/utils';
 import DateBox from '@/components/calendar/DateBox.tsx';
 import {ResponseCalendarPost} from '@/api';
+import YearSelector from '@/components/calendar/YearSelector.tsx';
+import useModal from '@/hooks/useModal.ts';
 
 interface CalendarProps<T> {
   monthYear: MonthYear;
@@ -24,6 +26,12 @@ function Calendar<T>({
   schedules,
 }: CalendarProps<T>) {
   const {month, year, lastDate, firstDOW} = monthYear;
+  const yearSelector = useModal();
+
+  const handleChangeYear = (selectYear: number) => {
+    onChangeMonth((selectYear - year) * 12);
+    yearSelector.hide();
+  };
 
   return (
     <>
@@ -33,7 +41,9 @@ function Calendar<T>({
           style={styles.monthButtonContainer}>
           <Ionicons name="arrow-back" size={25} color={colors.BLACK} />
         </Pressable>
-        <Pressable style={styles.monthYearContainer}>
+        <Pressable
+          style={styles.monthYearContainer}
+          onPress={yearSelector.show}>
           <Text style={styles.titleText}>
             {year}년 {month}월
           </Text>
@@ -69,6 +79,12 @@ function Calendar<T>({
           numColumns={7}
         />
       </View>
+      <YearSelector
+        isVisible={yearSelector.isVisible}
+        hide={yearSelector.hide}
+        currentYear={year}
+        onChangeYear={handleChangeYear}
+      />
     </>
   );
 }
