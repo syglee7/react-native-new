@@ -3,14 +3,21 @@ import {LatLng} from 'react-native-maps';
 
 interface LocationState {
   moveLocation: LatLng | null;
-  setMoveLocation: (location: LatLng) => void;
+  selectLocation: LatLng | null;
+  setMoveLocation: (location: LatLng | null) => void;
+  setSelectLocation: (location: LatLng | null) => void;
 }
 
-const useLocationStore = create<LocationState>(set => ({
+const useLocationStore = create<LocationState>((set) => ({
   moveLocation: null,
-  setMoveLocation: (moveLocation: LatLng) => {
-    //set(state => ({...state, moveLocation}));
-    set({moveLocation});
+  selectLocation: null,
+  setMoveLocation: (moveLocation: LatLng | null) => {
+    set((state) => ({...state, moveLocation}));
+    //set({moveLocation});
+  },
+  setSelectLocation: (selectLocation: LatLng | null) => {
+    set((state) => ({...state, selectLocation}));
+    //set({selectLocation});
   },
 }));
 
