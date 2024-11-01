@@ -7,12 +7,15 @@ import {queryKeys} from '@/constants';
 function useMutateDeletePost(mutationOptions?: UseMutationCustomOptions) {
   return useMutation({
     mutationFn: deletePost,
-    onSuccess: deleteId => {
+    onSuccess: (deleteId) => {
       queryClient.invalidateQueries({
         queryKey: [queryKeys.POST, queryKeys.GET_POST],
       });
       queryClient.invalidateQueries({
         queryKey: [queryKeys.MARKER, queryKeys.GET_MARKERS],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.POST, queryKeys.GET_CALENDAR_POSTS],
       });
       // queryClient.setQueryData<Marker[]>(
       //   [queryKeys.MARKER, queryKeys.GET_MARKERS],
