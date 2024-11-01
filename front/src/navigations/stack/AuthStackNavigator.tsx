@@ -5,11 +5,13 @@ import AuthHomeScreen from '@/screens/auth/AuthHomeScreen.tsx';
 import LoginScreen from '@/screens/auth/LoginScreen.tsx';
 import {authNavigations} from '@/constants';
 import SignupScreen from '@/screens/auth/SignupScreen.tsx';
+import KakaoLoginScreen from '@/screens/auth/KakaoLoginScreen.tsx';
 
 export type AuthStackParamList = {
   [authNavigations.AUTH_HOME]: undefined;
   [authNavigations.LOGIN]: undefined;
   [authNavigations.SIGNUP]: undefined;
+  [authNavigations.KAKAO]: undefined;
 };
 const Stack = createStackNavigator<AuthStackParamList>();
 function AuthStackNavigator() {
@@ -35,6 +37,11 @@ function AuthStackNavigator() {
         name={authNavigations.SIGNUP}
         component={SignupScreen}
         options={{headerTitle: '회원가입'}}
+      />
+      <Stack.Screen
+        name={authNavigations.KAKAO}
+        component={KakaoLoginScreen}
+        options={{headerTitle: '카카오 로그인'}}
       />
     </Stack.Navigator>
   );
