@@ -4,6 +4,7 @@ import useMutateImages from '@/hooks/queries/useMutateImages.ts';
 import {useState} from 'react';
 import {ImageUri} from '@/types';
 import {Alert} from 'react-native';
+import Toast from 'react-native-toast-message';
 
 interface UseImagePickerProps {
   initialImage: ImageUri[];
@@ -19,16 +20,16 @@ function useImagePicker({initialImage = []}: UseImagePickerProps) {
       return;
     }
 
-    setImageUris(prev => [
+    setImageUris((prev) => [
       ...prev,
-      ...uris.map(uri => ({
+      ...uris.map((uri) => ({
         uri,
       })),
     ]);
   };
 
   const deleteImageUri = (uri: string) => {
-    const newImageUris = imageUris.filter(image => image.uri !== uri);
+    const newImageUris = imageUris.filter((image) => image.uri !== uri);
     setImageUris(newImageUris);
   };
 
@@ -48,15 +49,21 @@ function useImagePicker({initialImage = []}: UseImagePickerProps) {
       cropperChooseText: '완료',
       cropperCancelText: '취소',
     })
-      .then(images => {
+      .then((images) => {
         const formData = getFormDataImages(images);
         uploadImages.mutate(formData, {
-          onSuccess: data => addImageUris(data),
+          onSuccess: (data) => addImageUris(data),
         });
       })
-      .catch(error => {
+      .catch((error) => {
         if (error.code !== 'E_PICKER_CANCELLED') {
           // 사용자가 취소한 경우가 아닐때만 에러 메세지 표시
+          Toast.show({
+            type: 'error',
+            text1: '갤러리를 열 수 없어요.',
+            text2: '권한을 허용했는지 확인해주세요.',
+            position: 'bottom',
+          });
         }
       });
   };
