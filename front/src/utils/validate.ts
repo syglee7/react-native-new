@@ -48,4 +48,16 @@ function validateAddPost(values: {title: string}) {
   return errors;
 }
 
-export {validateAddPost, validateLogin, validateSignup};
+function validateEditProfile(values: {nickname: string}) {
+  const errors = {
+    nickname: '',
+  };
+
+  if (values.nickname.trim() === '') {
+    errors.nickname = '닉네임을 입력해주세요.';
+  }
+
+  return errors;
+}
+
+export {validateAddPost, validateLogin, validateSignup, validateEditProfile};
