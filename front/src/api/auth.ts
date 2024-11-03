@@ -38,6 +38,20 @@ const kakaoLogin = async (token: string): Promise<ResponseToken> => {
   return data;
 };
 
+type RequestAppleIdentity = {
+  identityToken: string;
+  appId: string;
+  nickname: string | null;
+};
+
+const appleLogin = async (
+  body: RequestAppleIdentity,
+): Promise<ResponseToken> => {
+  const {data} = await axiosInstance.post('/auth/oauth/apple', body);
+
+  return data;
+};
+
 type ResponseProfile = Profile & Category;
 
 const getProfile = async (): Promise<ResponseProfile> => {
@@ -61,5 +75,13 @@ const logout = async () => {
   await axiosInstance.post('/auth/logout');
 };
 
-export {postSignup, postLogin, getProfile, getAccessToken, logout, kakaoLogin};
-export type {RequestUser, ResponseToken, ResponseProfile};
+export {
+  postSignup,
+  postLogin,
+  getProfile,
+  getAccessToken,
+  logout,
+  kakaoLogin,
+  appleLogin,
+};
+export type {RequestUser, ResponseToken, ResponseProfile, RequestAppleIdentity};
