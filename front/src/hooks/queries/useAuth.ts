@@ -32,6 +32,7 @@ import {Category, Profile} from '@/types';
 function useSignup(mutationOptions?: UseMutationCustomOptions) {
   return useMutation({
     mutationFn: postSignup,
+    throwOnError: error => Number(error.response?.status) >= 500,
     ...mutationOptions,
   });
 }
@@ -54,6 +55,7 @@ function useLogin<T>(
         queryKey: [queryKeys.AUTH, queryKeys.GET_PROFILE],
       });
     },
+    throwOnError: error => Number(error.response?.status) >= 500,
     ...mutationOptions,
   });
 }
@@ -71,7 +73,7 @@ function useAppleLogin(mutationOptions?: UseMutationCustomOptions) {
 }
 
 function useGetRefreshToken() {
-  const {data, error, isSuccess, isError} = useQuery({
+  const {data, error, isSuccess, isError, isPending} = useQuery({
     queryKey: [queryKeys.AUTH, queryKeys.GET_ACCESS_TOKEN],
     queryFn: getAccessToken,
     staleTime: numbers.ACCESS_TOKEN_REFRESH_TIME,
@@ -94,7 +96,7 @@ function useGetRefreshToken() {
     }
   }, [isError]);
 
-  return {isSuccess, isError};
+  return {isSuccess, isError, isPending};
 }
 
 type ResponseSelectProfile = {categories: Category} & Profile;
@@ -180,6 +182,7 @@ function useAuth() {
     onSuccess: () => logoutMutation.mutate(null),
   });
   const categoryMutation = useMutateCategory();
+  const isLoginLoading = refreshTokenQuery.isPending;
 
   return {
     signupMutation,
@@ -192,6 +195,7 @@ function useAuth() {
     profileMutation,
     deleteAccountMutation,
     categoryMutation,
+    isLoginLoading,
   };
 }
 
