@@ -27,6 +27,8 @@ import useModal from '@/hooks/useModal.ts';
 import useMoveMapView from '@/hooks/useMoveMapView.ts';
 import Toast from 'react-native-toast-message';
 import useLocationStore from '@/store/useLocationStore.ts';
+import useLegendStorage from '@/hooks/useLegendStorage.ts';
+import MapLegend from '@/components/map/MapLegend.tsx';
 
 type Navigation = CompositeNavigationProp<
   StackNavigationProp<MapStackParamList>,
@@ -43,6 +45,7 @@ function MapHomeScreen(/*{navigation}*/) {
   const {data: markers = []} = useGetMarkets();
   const markerModal = useModal();
   const {mapRef, moveMapView, handleChangeDelta} = useMoveMapView();
+  const legend = useLegendStorage();
 
   usePermission('LOCATION');
 
@@ -141,6 +144,7 @@ function MapHomeScreen(/*{navigation}*/) {
         isVisible={markerModal.isVisible}
         hide={markerModal.hide}
       />
+      {legend.isVisible && <MapLegend />}
     </>
   );
 }
