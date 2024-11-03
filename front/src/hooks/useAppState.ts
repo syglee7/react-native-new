@@ -21,7 +21,6 @@ function useAppState() {
 
       appState.current = nextAppState;
       setAppStateVisible(appState.current);
-      // console.log('AppState', appState.current);
     });
 
     return () => {

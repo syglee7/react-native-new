@@ -1,66 +1,58 @@
-import ImageCropPicker from 'react-native-image-crop-picker';
-import {getFormDataImages} from '@/utils';
-import useMutateImages from '@/hooks/queries/useMutateImages.ts';
 import {useState} from 'react';
-import {ImageUri} from '@/types';
 import {Alert} from 'react-native';
+import ImagePicker from 'react-native-image-crop-picker';
 import Toast from 'react-native-toast-message';
 
+import useMutateImages from './queries/useMutateImages';
+import type {ImageUri} from '@/types';
+import {getFormDataImages} from '@/utils';
+
 interface UseImagePickerProps {
-  initialImage: ImageUri[];
+  initialImages: ImageUri[];
   mode?: 'multiple' | 'single';
   onSettled?: () => void;
 }
 
 function useImagePicker({
-  initialImage = [],
+  initialImages = [],
   mode = 'multiple',
   onSettled,
 }: UseImagePickerProps) {
-  const [imageUris, setImageUris] = useState(initialImage);
+  const [imageUris, setImageUris] = useState(initialImages);
   const uploadImages = useMutateImages();
 
   const addImageUris = (uris: string[]) => {
     if (imageUris.length + uris.length > 5) {
-      Alert.alert('이미지 갯수 초과', '추가 가능한 이미지는 최대 5개입니다.');
+      Alert.alert('이미지 개수 초과', '추가 가능한 이미지는 최대 5개입니다.');
       return;
     }
 
-    setImageUris((prev) => [
-      ...prev,
-      ...uris.map((uri) => ({
-        uri,
-      })),
-    ]);
+    setImageUris(prev => [...prev, ...uris.map(uri => ({uri}))]);
   };
 
   const replaceImageUri = (uris: string[]) => {
     if (uris.length > 1) {
-      Alert.alert('이미지 갯수 초과', '추가 가능한 이미지는 최대 1개입니다.');
+      Alert.alert('이미지 개수 초과', '추가 가능한 이미지는 최대 1개입니다.');
       return;
     }
 
-    setImageUris([
-      ...uris.map((uri) => ({
-        uri,
-      })),
-    ]);
+    setImageUris([...uris.map(uri => ({uri}))]);
   };
 
   const deleteImageUri = (uri: string) => {
-    const newImageUris = imageUris.filter((image) => image.uri !== uri);
+    const newImageUris = imageUris.filter(image => image.uri !== uri);
     setImageUris(newImageUris);
   };
 
   const changeImageUrisOrder = (fromIndex: number, toIndex: number) => {
     const copyImageUris = [...imageUris];
-    const [removeImage] = copyImageUris.splice(fromIndex, 1);
-    copyImageUris.splice(toIndex, 0, removeImage);
+    const [removedImage] = copyImageUris.splice(fromIndex, 1);
+    copyImageUris.splice(toIndex, 0, removedImage);
     setImageUris(copyImageUris);
   };
 
   const handleChange = () => {
-    ImageCropPicker.openPicker({
+    ImagePicker.openPicker({
       mediaType: 'photo',
       multiple: true,
       includeBase64: true,
@@ -68,22 +60,23 @@ function useImagePicker({
       cropperChooseText: '완료',
       cropperCancelText: '취소',
     })
-      .then((images) => {
-        const formData = getFormDataImages(images);
+      .then(images => {
+        const formData = getFormDataImages('images', images);
+
         uploadImages.mutate(formData, {
-          onSuccess: (data) =>
+          onSuccess: data =>
             mode === 'multiple' ? addImageUris(data) : replaceImageUri(data),
           onSettled: () => onSettled && onSettled(),
         });
       })
-      .catch((error) => {
+      .catch(error => {
         if (error.code !== 'E_PICKER_CANCELLED') {
-          // 사용자가 취소한 경우가 아닐때만 에러 메세지 표시
           Toast.show({
             type: 'error',
             text1: '갤러리를 열 수 없어요.',
             text2: '권한을 허용했는지 확인해주세요.',
             position: 'bottom',
+            // visibilityTime: 3000,
           });
         }
       });
@@ -94,6 +87,7 @@ function useImagePicker({
     handleChange,
     delete: deleteImageUri,
     changeOrder: changeImageUrisOrder,
+    isUploading: uploadImages.isPending,
   };
 }
 

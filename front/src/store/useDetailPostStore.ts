@@ -1,5 +1,6 @@
 import {create} from 'zustand';
-import {ResponsePost} from '@/api';
+
+import type {ResponsePost} from '@/api';
 
 interface DetailPostState {
   detailPost: ResponsePost | null;

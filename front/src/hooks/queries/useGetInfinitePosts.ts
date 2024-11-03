@@ -1,18 +1,17 @@
+import {ResponsePost, getPosts} from '@/api';
+import {queryKeys} from '@/constants';
+import {ResponseError} from '@/types';
 import {
   InfiniteData,
   QueryKey,
-  useInfiniteQuery,
   UseInfiniteQueryOptions,
+  useInfiniteQuery,
 } from '@tanstack/react-query';
-import {getPosts, ResponsePost} from '@/api';
-import {queryKeys} from '@/constants';
-import {ResponseError} from '@/types';
 
 function useGetInfinitePosts(
   queryOptions?: UseInfiniteQueryOptions<
     ResponsePost[],
     ResponseError,
-    ///ResponsePost[][],
     InfiniteData<ResponsePost[], number>,
     ResponsePost[],
     QueryKey,
@@ -27,7 +26,6 @@ function useGetInfinitePosts(
       const lastPost = lastPage[lastPage.length - 1];
       return lastPost ? allPages.length + 1 : undefined;
     },
-    // select: data => data.pages,
     ...queryOptions,
   });
 }

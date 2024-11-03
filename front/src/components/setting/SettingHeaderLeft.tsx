@@ -1,13 +1,13 @@
 import React from 'react';
-import {View} from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import HeaderButton from '../common/HeaderButton';
+import {colors} from '@/constants';
 import {CompositeNavigationProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {SettingStackParamList} from '@/navigations/stack/SettingStackNavigator.tsx';
+import {SettingStackParamList} from '@/navigations/stack/SettingStackNavigator';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
-import {MainDrawerParamList} from '@/navigations/drawer/MainDrawerNavigator.tsx';
-import HeaderButton from '@/components/common/HeaderButton.tsx';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import {colors} from '@/constants';
+import {MainDrawerParamList} from '@/navigations/drawer/MainDrawerNavigator';
+import useThemeStore from '@/store/useThemeStore';
 
 type SettingHeaderLeftProps = CompositeNavigationProp<
   StackNavigationProp<SettingStackParamList>,
@@ -15,16 +15,12 @@ type SettingHeaderLeftProps = CompositeNavigationProp<
 >;
 
 function SettingHeaderLeft(navigation: SettingHeaderLeftProps) {
+  const {theme} = useThemeStore();
+
   return (
     <HeaderButton
-      icon={
-        <Ionicons
-          name="menu"
-          color={colors.BLACK}
-          size={25}
-          onPress={() => navigation.openDrawer()}
-        />
-      }
+      icon={<Ionicons name="menu" color={colors[theme].BLACK} size={25} />}
+      onPress={() => navigation.openDrawer()}
     />
   );
 }

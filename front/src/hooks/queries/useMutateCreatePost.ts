@@ -1,14 +1,14 @@
-import {UseMutationCustomOptions} from '@/types/common.ts';
 import {useMutation} from '@tanstack/react-query';
-import {createPost} from '@/api';
-import queryClient from '@/api/queryClient.ts';
+
+import {createPost} from '@/api/post';
+import {Marker, UseMutationCustomOptions} from '@/types';
+import queryClient from '@/api/queryClient';
 import {queryKeys} from '@/constants';
-import {Marker} from '@/types';
 
 function useMutateCreatePost(mutationOptions?: UseMutationCustomOptions) {
   return useMutation({
     mutationFn: createPost,
-    onSuccess: (newPost) => {
+    onSuccess: newPost => {
       queryClient.invalidateQueries({
         queryKey: [queryKeys.POST, queryKeys.GET_POSTS],
       });
@@ -20,17 +20,11 @@ function useMutateCreatePost(mutationOptions?: UseMutationCustomOptions) {
           new Date(newPost.date).getMonth() + 1,
         ],
       });
-
-      // queryClient.invalidateQueries({
-      //   queryKey: [queryKeys.MARKER, queryKeys.GET_MARKERS],
-      // });
-      //
-      // console.log('newPost', newPost);
       queryClient.setQueryData<Marker[]>(
         [queryKeys.MARKER, queryKeys.GET_MARKERS],
-        (existingMarkers) => {
+        existingMarkers => {
           const newMarker = {
-            id: newPost?.id,
+            id: newPost.id,
             latitude: newPost.latitude,
             longitude: newPost.longitude,
             color: newPost.color,
@@ -43,6 +37,7 @@ function useMutateCreatePost(mutationOptions?: UseMutationCustomOptions) {
         },
       );
     },
+
     ...mutationOptions,
   });
 }

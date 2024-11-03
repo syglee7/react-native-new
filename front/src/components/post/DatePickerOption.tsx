@@ -7,8 +7,10 @@ import {
   Text,
   View,
 } from 'react-native';
-import {colors} from '@/constants';
 import DatePicker from 'react-native-date-picker';
+import {colors} from '@/constants';
+import {ThemeMode} from '@/types';
+import useThemeStore from '@/store/useThemeStore';
 
 interface DatePickerOptionProps {
   isVisible: boolean;
@@ -23,14 +25,17 @@ function DatePickerOption({
   onChangeDate,
   onConfirmDate,
 }: DatePickerOptionProps) {
+  const {theme} = useThemeStore();
+  const styles = styling(theme);
+
   return (
-    <Modal visible={isVisible} transparent animationType="slide">
-      <SafeAreaView style={styles.optionBackground}>
+    <Modal visible={isVisible} transparent={true} animationType={'slide'}>
+      <SafeAreaView style={[styles.optionBackground, styles.dimmed]}>
         <View style={styles.optionContainer}>
           <View style={styles.pickerContainer}>
             <DatePicker
               mode="date"
-              theme="auto"
+              textColor={colors[theme].BLACK}
               date={date}
               onDateChange={onChangeDate}
               locale="ko"
@@ -47,34 +52,37 @@ function DatePickerOption({
   );
 }
 
-const styles = StyleSheet.create({
-  optionBackground: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0 / 0.5)',
-  },
-  optionContainer: {
-    borderRadius: 15,
-    marginHorizontal: 10,
-    marginBottom: 10,
-    backgroundColor: colors.GRAY_100,
-    overflow: 'hidden',
-  },
-  optionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 50,
-    gap: 5,
-  },
-  pickerContainer: {
-    alignItems: 'center',
-  },
-  optionText: {
-    color: colors.BLUE_500,
-    fontSize: 17,
-    fontWeight: '500',
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    pickerContainer: {
+      alignItems: 'center',
+    },
+    optionBackground: {
+      flex: 1,
+      justifyContent: 'flex-end',
+    },
+    dimmed: {
+      backgroundColor: 'rgba(0 0 0 / 0.5)',
+    },
+    optionContainer: {
+      borderRadius: 15,
+      marginHorizontal: 10,
+      marginBottom: 10,
+      backgroundColor: colors[theme].GRAY_100,
+      overflow: 'hidden',
+    },
+    optionButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: 50,
+      gap: 5,
+    },
+    optionText: {
+      fontSize: 17,
+      color: colors[theme].BLUE_500,
+      fontWeight: '500',
+    },
+  });
 
 export default DatePickerOption;

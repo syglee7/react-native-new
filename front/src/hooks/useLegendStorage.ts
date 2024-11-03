@@ -1,7 +1,8 @@
-import useLegendStore from '@/store/useLegendStore.ts';
 import {useEffect} from 'react';
-import {getEncryptStorage, setEncryptStorage} from '@/utils';
+
 import {storageKeys} from '@/constants';
+import {getEncryptStorage, setEncryptStorage} from '@/utils';
+import useLegendStore from '@/store/useLegendStore';
 
 function useLegendStorage() {
   const {isVisible, setIsVisible} = useLegendStore();
@@ -17,7 +18,7 @@ function useLegendStorage() {
         (await getEncryptStorage(storageKeys.SHOW_LEGEND)) ?? false;
       setIsVisible(storedData);
     })();
-  }, []);
+  }, [setIsVisible]);
 
   return {set, isVisible};
 }

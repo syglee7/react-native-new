@@ -1,3 +1,13 @@
+import InputField from '@/components/common/InputField';
+import EditCategoryHeaderRight from '@/components/setting/EditCategoryHeaderRight';
+import {colorHex, colors, errorMessages} from '@/constants';
+import useAuth from '@/hooks/queries/useAuth';
+import useForm from '@/hooks/useForm';
+import {SettingStackParamList} from '@/navigations/stack/SettingStackNavigator';
+import useThemeStore from '@/store/useThemeStore';
+import {MarkerColor, ThemeMode} from '@/types';
+import {validateCategory} from '@/utils';
+import {StackScreenProps} from '@react-navigation/stack';
 import React, {useEffect, useRef} from 'react';
 import {
   SafeAreaView,
@@ -7,15 +17,6 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import useAuth from '@/hooks/queries/useAuth.ts';
-import {colorHex, colors, errorMessages} from '@/constants';
-import {MarkerColor} from '@/types';
-import InputField from '@/components/common/InputField.tsx';
-import useForm from '@/hooks/useForm.ts';
-import {validateCategory} from '@/utils';
-import {StackScreenProps} from '@react-navigation/stack';
-import {SettingStackParamList} from '@/navigations/stack/SettingStackNavigator.tsx';
-import EditCategoryHeaderRight from '@/components/setting/EditCategoryHeaderRight.tsx';
 import Toast from 'react-native-toast-message';
 
 const categoryList: MarkerColor[] = [
@@ -37,6 +38,8 @@ const categoryPlaceholderList = [
 type EditCategoryScreenProps = StackScreenProps<SettingStackParamList>;
 
 function EditCategoryScreen({navigation}: EditCategoryScreenProps) {
+  const {theme} = useThemeStore();
+  const styles = styling(theme);
   const refArray = useRef<(TextInput | null)[]>([]);
   const {getProfileQuery, categoryMutation} = useAuth();
   const {categories} = getProfileQuery.data || {};
@@ -59,7 +62,7 @@ function EditCategoryScreen({navigation}: EditCategoryScreenProps) {
           text1: '저장되었습니다.',
           position: 'bottom',
         }),
-      onError: (error) =>
+      onError: error =>
         Toast.show({
           type: 'error',
           text1: error.response?.data.message || errorMessages.UNEXPECT_ERROR,
@@ -101,7 +104,7 @@ function EditCategoryScreen({navigation}: EditCategoryScreenProps) {
                     error={category.errors[color]}
                     touched={category.touched[color]}
                     placeholder={categoryPlaceholderList[i]}
-                    ref={(el) => (refArray.current[i] = el)}
+                    ref={el => (refArray.current[i] = el)}
                     autoFocus={color === 'RED'}
                     maxLength={10}
                     returnKeyType="next"
@@ -120,46 +123,48 @@ function EditCategoryScreen({navigation}: EditCategoryScreenProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  contentContainer: {
-    flex: 1,
-    padding: 20,
-    marginBottom: 10,
-  },
-  infoContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 30,
-    borderWidth: 1,
-    borderColor: colors.PINK_700,
-    borderRadius: 3,
-    padding: 10,
-    gap: 10,
-  },
-  infoText: {
-    color: colors.PINK_700,
-    fontSize: 15,
-    fontWeight: '600',
-  },
-  formContainer: {
-    gap: 15,
-  },
-  categoryContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 20,
-  },
-  category: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.PINK_400,
-  },
-  inputContainer: {
-    flex: 1,
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    contentContainer: {
+      flex: 1,
+      padding: 20,
+      marginBottom: 10,
+    },
+    infoContainer: {
+      alignItems: 'center',
+      marginTop: 10,
+      marginBottom: 30,
+      borderWidth: 1,
+      borderColor: colors[theme].PINK_700,
+      borderRadius: 3,
+      padding: 10,
+      gap: 10,
+    },
+    infoText: {
+      color: colors[theme].PINK_700,
+      fontSize: 15,
+      fontWeight: '600',
+    },
+    formContainer: {
+      gap: 15,
+    },
+    categoryContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 20,
+    },
+    category: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: colors[theme].PINK_400,
+    },
+    inputContainer: {
+      flex: 1,
+    },
+  });
+
 export default EditCategoryScreen;

@@ -75,5 +75,4 @@ export {
   getNewMonthYear,
   isSameAsCurrentDate,
 };
-
 export type {MonthYear};

@@ -1,12 +1,13 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
+
 import {colors, settingNavigations} from '@/constants';
-import EditProfileScreen from '@/screens/setting/EditProfileScreen.tsx';
-import SettingHomeScreen from '@/screens/setting/SettingHomeScreen.tsx';
-import SettingHeaderLeft from '@/components/setting/SettingHeaderLeft.tsx';
-import DeleteAccountScreen from '@/screens/setting/DeleteAccountScreen.tsx';
-import EditCategoryScreen from '@/screens/setting/EditCategoryScreen.tsx';
+import SettingHomeScreen from '@/screens/setting/SettingHomeScreen';
+import EditProfileScreen from '@/screens/setting/EditProfileScreen';
+import SettingHeaderLeft from '@/components/setting/SettingHeaderLeft';
+import DeleteAccountScreen from '@/screens/setting/DeleteAccountScreen';
+import EditCategoryScreen from '@/screens/setting/EditCategoryScreen';
+import useThemeStore from '@/store/useThemeStore';
 
 export type SettingStackParamList = {
   [settingNavigations.SETTING_HOME]: undefined;
@@ -14,15 +15,26 @@ export type SettingStackParamList = {
   [settingNavigations.DELETE_ACCOUNT]: undefined;
   [settingNavigations.EDIT_CATEGORY]: undefined;
 };
+
 const Stack = createStackNavigator<SettingStackParamList>();
+
 function SettingStackNavigator() {
+  const {theme} = useThemeStore();
+
   return (
     <Stack.Navigator
       screenOptions={{
-        headerTitleStyle: {fontSize: 15},
-        headerTintColor: 'black',
-        cardStyle: {backgroundColor: colors.GRAY_100},
-        headerStyle: {backgroundColor: 'white', shadowColor: 'gray'},
+        cardStyle: {
+          backgroundColor: colors[theme].GRAY_100,
+        },
+        headerStyle: {
+          shadowColor: colors[theme].GRAY_200,
+          backgroundColor: colors[theme].WHITE,
+        },
+        headerTitleStyle: {
+          fontSize: 15,
+        },
+        headerTintColor: colors[theme].BLACK,
       }}>
       <Stack.Screen
         name={settingNavigations.SETTING_HOME}
@@ -35,36 +47,35 @@ function SettingStackNavigator() {
       <Stack.Screen
         name={settingNavigations.EDIT_PROFILE}
         component={EditProfileScreen}
-        options={({navigation}) => ({
+        options={{
           headerTitle: '프로필 수정',
           cardStyle: {
-            backgroundColor: colors.WHITE,
+            backgroundColor: colors[theme].WHITE,
           },
-        })}
+        }}
       />
       <Stack.Screen
         name={settingNavigations.DELETE_ACCOUNT}
         component={DeleteAccountScreen}
-        options={({navigation}) => ({
+        options={{
           headerTitle: '회원탈퇴',
           cardStyle: {
-            backgroundColor: colors.WHITE,
+            backgroundColor: colors[theme].WHITE,
           },
-        })}
+        }}
       />
       <Stack.Screen
         name={settingNavigations.EDIT_CATEGORY}
         component={EditCategoryScreen}
-        options={({navigation}) => ({
+        options={{
           headerTitle: '카테고리 설정',
           cardStyle: {
-            backgroundColor: colors.WHITE,
+            backgroundColor: colors[theme].WHITE,
           },
-        })}
+        }}
       />
     </Stack.Navigator>
   );
 }
 
-const styles = StyleSheet.create({});
 export default SettingStackNavigator;

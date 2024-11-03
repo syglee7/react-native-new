@@ -1,13 +1,14 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {colors, feedNavigations} from '@/constants';
-import FeedHomeScreen from '@/screens/feed/FeedHomeScreen.tsx';
-import FeedHomeHeaderLeft from '@/components/feed/FeedHomeHeaderLeft.tsx';
-import FeedDetailScreen from '@/screens/feed/FeedDetailScreen.tsx';
 import {LatLng} from 'react-native-maps';
-import EditPostScreen from '@/screens/feed/EditPostScreen.tsx';
-import ImageZoomScreen from '@/screens/feed/ImageZoomScreen.tsx';
+
+import {colors, feedNavigations} from '@/constants';
+import FeedHomeScreen from '@/screens/feed/FeedHomeScreen';
+import FeedDetailScreen from '@/screens/feed/FeedDetailScreen';
+import EditPostScreen from '@/screens/feed/EditPostScreen';
+import ImageZoomScreen from '@/screens/feed/ImageZoomScreen';
+import FeedHomeHeaderLeft from '@/components/feed/FeedHomeHeaderLeft';
+import useThemeStore from '@/store/useThemeStore';
 
 export type FeedStackParamList = {
   [feedNavigations.FEED_HOME]: undefined;
@@ -15,15 +16,26 @@ export type FeedStackParamList = {
   [feedNavigations.EDIT_POST]: {location: LatLng};
   [feedNavigations.IMAGE_ZOOM]: {index: number};
 };
+
 const Stack = createStackNavigator<FeedStackParamList>();
+
 function FeedStackNavigator() {
+  const {theme} = useThemeStore();
+
   return (
     <Stack.Navigator
       screenOptions={{
-        headerTitleStyle: {fontSize: 15},
-        headerTintColor: 'black',
-        cardStyle: {backgroundColor: 'white'},
-        headerStyle: {backgroundColor: 'white', shadowColor: 'gray'},
+        cardStyle: {
+          backgroundColor: colors[theme].WHITE,
+        },
+        headerStyle: {
+          shadowColor: colors[theme].GRAY_200,
+          backgroundColor: colors[theme].WHITE,
+        },
+        headerTitleStyle: {
+          fontSize: 15,
+        },
+        headerTintColor: colors[theme].BLACK,
       }}>
       <Stack.Screen
         name={feedNavigations.FEED_HOME}
@@ -37,10 +49,10 @@ function FeedStackNavigator() {
         name={feedNavigations.FEED_DETAIL}
         component={FeedDetailScreen}
         options={{
-          headerTitle: ' ',
           headerShown: false,
+          headerTitle: ' ',
           cardStyle: {
-            backgroundColor: colors.GRAY_100,
+            backgroundColor: colors[theme].GRAY_100,
           },
         }}
       />
@@ -63,5 +75,4 @@ function FeedStackNavigator() {
   );
 }
 
-const styles = StyleSheet.create({});
 export default FeedStackNavigator;

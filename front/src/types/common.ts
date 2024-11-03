@@ -6,7 +6,7 @@ import {
 } from '@tanstack/react-query';
 
 type ResponseError = AxiosError<{
-  statusCode: string;
+  statusCode: number;
   message: string;
   error: string;
 }>;

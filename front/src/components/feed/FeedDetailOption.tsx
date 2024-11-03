@@ -1,11 +1,12 @@
 import React from 'react';
-import {Alert, StyleSheet} from 'react-native';
-import {CompoundOption} from '@/components/common/CompoundOption.tsx';
-import useMutateDeletePost from '@/hooks/queries/useMutateDeletePost.ts';
-import useDetailPostStore from '@/store/useDetailPostStore.ts';
-import {useNavigation} from '@react-navigation/native';
+import {Alert} from 'react-native';
+import {useNavigation} from '@react-navigation/core';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {FeedStackParamList} from '@/navigations/stack/FeedStackNavigator.tsx';
+
+import {FeedStackParamList} from '@/navigations/stack/FeedStackNavigator';
+import useMutateDeletePost from '@/hooks/queries/useMutateDeletePost';
+import useDetailPostStore from '@/store/useDetailPostStore';
+import {CompoundOption} from '../common/CompoundOption';
 import {alerts, feedNavigations} from '@/constants';
 
 interface FeedDetailOptionProps {
@@ -15,8 +16,8 @@ interface FeedDetailOptionProps {
 
 function FeedDetailOption({isVisible, hideOption}: FeedDetailOptionProps) {
   const navigation = useNavigation<StackNavigationProp<FeedStackParamList>>();
-  const deletePost = useMutateDeletePost();
   const {detailPost} = useDetailPostStore();
+  const deletePost = useMutateDeletePost();
 
   const handleDeletePost = () => {
     if (!detailPost) {
@@ -26,14 +27,13 @@ function FeedDetailOption({isVisible, hideOption}: FeedDetailOptionProps) {
     Alert.alert(alerts.DELETE_POST.TITLE, alerts.DELETE_POST.DESCRIPTION, [
       {
         text: '삭제',
-        onPress: () => {
-          deletePost.mutate(detailPost?.id, {
+        onPress: () =>
+          deletePost.mutate(detailPost.id, {
             onSuccess: () => {
               hideOption();
               navigation.goBack();
             },
-          });
-        },
+          }),
         style: 'destructive',
       },
       {
@@ -50,8 +50,8 @@ function FeedDetailOption({isVisible, hideOption}: FeedDetailOptionProps) {
 
     navigation.navigate(feedNavigations.EDIT_POST, {
       location: {
-        latitude: detailPost?.latitude,
-        longitude: detailPost?.longitude,
+        latitude: detailPost.latitude,
+        longitude: detailPost.longitude,
       },
     });
     hideOption();
@@ -61,7 +61,7 @@ function FeedDetailOption({isVisible, hideOption}: FeedDetailOptionProps) {
     <CompoundOption isVisible={isVisible} hideOption={hideOption}>
       <CompoundOption.Background>
         <CompoundOption.Container>
-          <CompoundOption.Button isDanger onPress={handleDeletePost}>
+          <CompoundOption.Button onPress={handleDeletePost} isDanger>
             삭제하기
           </CompoundOption.Button>
           <CompoundOption.Divider />
@@ -78,7 +78,5 @@ function FeedDetailOption({isVisible, hideOption}: FeedDetailOptionProps) {
     </CompoundOption>
   );
 }
-
-const styles = StyleSheet.create({});
 
 export default FeedDetailOption;

@@ -1,7 +1,10 @@
-import {useEffect, useState} from 'react';
 import axios from 'axios';
+import {useEffect, useState} from 'react';
+import type {LatLng} from 'react-native-maps';
 import Config from 'react-native-config';
-import {LatLng} from 'react-native-maps';
+
+import useDebounce from './useDebounce';
+import {numbers} from '@/constants';
 
 type Meta = {
   total_count: number;
@@ -39,36 +42,45 @@ function useSearchLocation(keyword: string, location: LatLng) {
   const [hasNextPage, setHasNextPage] = useState(false);
   const [pageParam, setPageParam] = useState(1);
 
+  const debouncedSearchText = useDebounce(keyword, 300);
+
   const fetchNextPage = () => {
-    setPageParam((prev) => prev + 1);
+    setPageParam(prev => prev + 1);
   };
 
   const fetchPrevPage = () => {
-    setPageParam((prev) => prev - 1);
+    setPageParam(prev => prev - 1);
   };
 
   useEffect(() => {
     (async () => {
       try {
         const {data} = await axios.get<RegionResponse>(
-          `https://dapi.kakao.com/v2/local/search/keyword.json?query=${keyword}&y=${location.latitude}&x=${location.longitude}&page=${pageParam}`,
+          `https://dapi.kakao.com/v2/local/search/keyword.json?query=${debouncedSearchText}&y=${location.latitude}&x=${location.longitude}&page=${pageParam}`,
           {
             headers: {
               Authorization: `KakaoAK ${Config.KAKAO_REST_API_KEY}`,
             },
           },
         );
+
         setHasNextPage(!data.meta.is_end);
         setRegionInfo(data.documents);
-      } catch (e) {
-        console.error(e);
+      } catch (error) {
         setRegionInfo([]);
       }
     })();
-    keyword === '' && setPageParam(1);
-  }, [keyword, location, pageParam]);
 
-  return {regionInfo, pageParam, fetchNextPage, fetchPrevPage, hasNextPage};
+    debouncedSearchText === '' && setPageParam(1);
+  }, [debouncedSearchText, location, pageParam]);
+
+  return {
+    regionInfo,
+    pageParam,
+    fetchNextPage,
+    fetchPrevPage,
+    hasNextPage,
+  };
 }
 
 export default useSearchLocation;

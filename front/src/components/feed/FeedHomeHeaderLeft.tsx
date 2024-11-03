@@ -1,13 +1,14 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
-import HeaderButton from '@/components/common/HeaderButton.tsx';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import {StyleSheet, View} from 'react-native';
+import HeaderButton from '../common/HeaderButton';
 import {colors} from '@/constants';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {CompositeNavigationProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
-import {CompositeNavigationProp} from '@react-navigation/native';
-import {FeedStackParamList} from '@/navigations/stack/FeedStackNavigator.tsx';
-import {MainDrawerParamList} from '@/navigations/drawer/MainDrawerNavigator.tsx';
+import {FeedStackParamList} from '@/navigations/stack/FeedStackNavigator';
+import {MainDrawerParamList} from '@/navigations/drawer/MainDrawerNavigator';
+import useThemeStore from '@/store/useThemeStore';
 
 type FeedHomeHeaderLeftProps = CompositeNavigationProp<
   StackNavigationProp<FeedStackParamList>,
@@ -15,16 +16,12 @@ type FeedHomeHeaderLeftProps = CompositeNavigationProp<
 >;
 
 function FeedHomeHeaderLeft(navigation: FeedHomeHeaderLeftProps) {
+  const {theme} = useThemeStore();
+
   return (
     <HeaderButton
-      icon={
-        <Ionicons
-          name="menu"
-          color={colors.BLACK}
-          size={25}
-          onPress={() => navigation.openDrawer()}
-        />
-      }
+      icon={<Ionicons name="menu" color={colors[theme].BLACK} size={25} />}
+      onPress={() => navigation.openDrawer()}
     />
   );
 }

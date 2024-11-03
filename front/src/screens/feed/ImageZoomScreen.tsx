@@ -1,17 +1,20 @@
 import React from 'react';
+import {StyleSheet} from 'react-native';
 import {StackScreenProps} from '@react-navigation/stack';
-import {FeedStackParamList} from '@/navigations/stack/FeedStackNavigator.tsx';
-import useDetailPostStore from '@/store/useDetailPostStore.ts';
-import ImageCarousel from '@/components/common/ImageCarousel.tsx';
+
+import ImageCarousel from '@/components/common/ImageCarousel';
 import {feedNavigations} from '@/constants';
+import {FeedStackParamList} from '@/navigations/stack/FeedStackNavigator';
+import useDetailStore from '@/store/useDetailPostStore';
 
 type ImageZoomScreenProps = StackScreenProps<
   FeedStackParamList,
   typeof feedNavigations.IMAGE_ZOOM
 >;
+
 function ImageZoomScreen({route}: ImageZoomScreenProps) {
   const {index} = route.params;
-  const {detailPost} = useDetailPostStore();
+  const {detailPost} = useDetailStore();
 
   return (
     <ImageCarousel images={detailPost?.images ?? []} pressedIndex={index} />

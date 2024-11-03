@@ -1,5 +1,5 @@
 import React from 'react';
-import {CompoundOption} from '@/components/common/CompoundOption.tsx';
+import {CompoundOption} from '../common/CompoundOption';
 
 interface EditProfileImageOptionProps {
   isVisible: boolean;
@@ -20,6 +20,7 @@ function EditProfileImageOption({
             앨범에서 사진선택
           </CompoundOption.Button>
         </CompoundOption.Container>
+
         <CompoundOption.Container>
           <CompoundOption.Button onPress={hideOption}>
             취소

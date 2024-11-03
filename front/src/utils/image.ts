@@ -1,6 +1,6 @@
-import {Image} from 'react-native-image-crop-picker';
+import type {Image} from 'react-native-image-crop-picker';
 
-function getFormDataImages(images: Image[]) {
+function getFormDataImages(key: string = 'images', images: Image[]) {
   const formData = new FormData();
 
   images.forEach(({path, mime}) => {
@@ -10,7 +10,7 @@ function getFormDataImages(images: Image[]) {
       name: path.split('/').pop(),
     };
 
-    formData.append('images', file);
+    formData.append(key, file);
   });
 
   return formData;

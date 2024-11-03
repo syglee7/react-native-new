@@ -1,5 +1,9 @@
+import {useEffect} from 'react';
 import {MutationFunction, useMutation, useQuery} from '@tanstack/react-query';
+
 import {
+  ResponseProfile,
+  ResponseToken,
   appleLogin,
   deleteAccount,
   editCategory,
@@ -10,20 +14,20 @@ import {
   logout,
   postLogin,
   postSignup,
-  ResponseProfile,
-  ResponseToken,
-} from '@/api/auth.ts';
+} from '@/api/auth';
 import {
-  Category,
-  Profile,
+  removeEncryptStorage,
+  removeHeader,
+  setEncryptStorage,
+  setHeader,
+} from '@/utils';
+import queryClient from '@/api/queryClient';
+import {numbers, queryKeys, storageKeys} from '@/constants';
+import type {
   UseMutationCustomOptions,
   UseQueryCustomOptions,
-} from '@/types';
-import {removeEncryptedStorage, setEncryptStorage} from '@/utils';
-import {removeHeader, setHeader} from '@/utils';
-import {useEffect} from 'react';
-import queryClient from '@/api/queryClient.ts';
-import {numbers, queryKeys, storageKeys} from '@/constants';
+} from '@/types/common';
+import {Category, Profile} from '@/types';
 
 function useSignup(mutationOptions?: UseMutationCustomOptions) {
   return useMutation({
@@ -39,8 +43,8 @@ function useLogin<T>(
   return useMutation({
     mutationFn: loginAPI,
     onSuccess: ({accessToken, refreshToken}) => {
-      setEncryptStorage(storageKeys.REFRESH_TOKEN, refreshToken);
       setHeader('Authorization', `Bearer ${accessToken}`);
+      setEncryptStorage(storageKeys.REFRESH_TOKEN, refreshToken);
     },
     onSettled: () => {
       queryClient.refetchQueries({
@@ -67,7 +71,7 @@ function useAppleLogin(mutationOptions?: UseMutationCustomOptions) {
 }
 
 function useGetRefreshToken() {
-  const {isSuccess, data, isError} = useQuery({
+  const {data, error, isSuccess, isError} = useQuery({
     queryKey: [queryKeys.AUTH, queryKeys.GET_ACCESS_TOKEN],
     queryFn: getAccessToken,
     staleTime: numbers.ACCESS_TOKEN_REFRESH_TIME,
@@ -78,15 +82,15 @@ function useGetRefreshToken() {
 
   useEffect(() => {
     if (isSuccess) {
-      setHeader('Authorization', `Bearer ${data?.accessToken}`);
-      setEncryptStorage(storageKeys.REFRESH_TOKEN, data?.refreshToken);
+      setHeader('Authorization', `Bearer ${data.accessToken}`);
+      setEncryptStorage(storageKeys.REFRESH_TOKEN, data.refreshToken);
     }
   }, [isSuccess]);
 
   useEffect(() => {
     if (isError) {
       removeHeader('Authorization');
-      removeEncryptedStorage(storageKeys.REFRESH_TOKEN);
+      removeEncryptStorage(storageKeys.REFRESH_TOKEN);
     }
   }, [isError]);
 
@@ -108,8 +112,8 @@ function useGetProfile(
   queryOptions?: UseQueryCustomOptions<ResponseProfile, ResponseSelectProfile>,
 ) {
   return useQuery({
-    queryKey: [queryKeys.AUTH, queryKeys.GET_PROFILE],
     queryFn: getProfile,
+    queryKey: [queryKeys.AUTH, queryKeys.GET_PROFILE],
     select: transformProfileCategory,
     ...queryOptions,
   });
@@ -118,7 +122,7 @@ function useGetProfile(
 function useMutateCategory(mutationOptions?: UseMutationCustomOptions) {
   return useMutation({
     mutationFn: editCategory,
-    onSuccess: (newProfile) => {
+    onSuccess: newProfile => {
       queryClient.setQueryData(
         [queryKeys.AUTH, queryKeys.GET_PROFILE],
         newProfile,
@@ -131,7 +135,7 @@ function useMutateCategory(mutationOptions?: UseMutationCustomOptions) {
 function useUpdateProfile(mutationOptions?: UseMutationCustomOptions) {
   return useMutation({
     mutationFn: editProfile,
-    onSuccess: (newProfile) => {
+    onSuccess: newProfile => {
       queryClient.setQueryData(
         [queryKeys.AUTH, queryKeys.GET_PROFILE],
         newProfile,
@@ -146,12 +150,9 @@ function useLogout(mutationOptions?: UseMutationCustomOptions) {
     mutationFn: logout,
     onSuccess: () => {
       removeHeader('Authorization');
-      removeEncryptedStorage(storageKeys.REFRESH_TOKEN);
+      removeEncryptStorage(storageKeys.REFRESH_TOKEN);
       queryClient.resetQueries({queryKey: [queryKeys.AUTH]});
     },
-    // onSettled: () => {
-    //   queryClient.invalidateQueries({queryKey: [queryKeys.AUTH]});
-    // },
     ...mutationOptions,
   });
 }
@@ -183,8 +184,8 @@ function useAuth() {
   return {
     signupMutation,
     loginMutation,
-    isLogin,
     getProfileQuery,
+    isLogin,
     logoutMutation,
     kakaoLoginMutation,
     appleLoginMutation,

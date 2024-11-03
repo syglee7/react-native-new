@@ -1,18 +1,22 @@
 import React from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, View} from 'react-native';
-import SettingItem from '@/components/setting/SettingItem.tsx';
-import {colors, settingNavigations} from '@/constants';
+import {ScrollView} from 'react-native';
+import {SafeAreaView, StyleSheet, View} from 'react-native';
 import Octicons from 'react-native-vector-icons/Octicons';
+
+import SettingItem from '@/components/setting/SettingItem';
+import {colors, settingNavigations} from '@/constants';
 import {StackScreenProps} from '@react-navigation/stack';
-import {SettingStackParamList} from '@/navigations/stack/SettingStackNavigator.tsx';
-import useAuth from '@/hooks/queries/useAuth.ts';
-import useModal from '@/hooks/useModal.ts';
-import DarkModeOption from '@/components/setting/DarkModeOption.tsx';
-import MapLegendOption from '@/components/setting/MapLegendOption.tsx';
+import {SettingStackParamList} from '@/navigations/stack/SettingStackNavigator';
+import useAuth from '@/hooks/queries/useAuth';
+import DarkModeOption from '@/components/setting/DarkModeOption';
+import useModal from '@/hooks/useModal';
+import useThemeStore from '@/store/useThemeStore';
+import MapLegendOption from '@/components/map/MapLegendOption';
 
 type SettingHomeScreenProps = StackScreenProps<SettingStackParamList>;
 
 function SettingHomeScreen({navigation}: SettingHomeScreenProps) {
+  const {theme} = useThemeStore();
   const {logoutMutation} = useAuth();
   const darkModeOption = useModal();
   const mapLegendOption = useModal();
@@ -40,13 +44,21 @@ function SettingHomeScreen({navigation}: SettingHomeScreenProps) {
         />
         <SettingItem title="다크 모드" onPress={darkModeOption.show} />
         <SettingItem title="범례 표시" onPress={mapLegendOption.show} />
+
         <View style={styles.space} />
         <SettingItem
-          onPress={handlePressLogout}
           title="로그아웃"
-          color={colors.RED_500}
-          icon={<Octicons name="sign-out" color={colors.RED_500} size={16} />}
+          onPress={handlePressLogout}
+          color={colors[theme].RED_500}
+          icon={
+            <Octicons
+              name={'sign-out'}
+              color={colors[theme].RED_500}
+              size={16}
+            />
+          }
         />
+
         <DarkModeOption
           isVisible={darkModeOption.isVisible}
           hideOption={darkModeOption.hide}

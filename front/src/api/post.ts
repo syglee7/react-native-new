@@ -1,13 +1,15 @@
-import axiosInstance from '@/api/axios.ts';
-import {ImageUri, Post} from '@/types/domain.ts';
+import {ImageUri, Post} from '@/types';
+import axiosInstance from './axios';
 
 type ResponsePost = Post & {images: ImageUri[]};
-type RequestCreatePost = Omit<Post, 'id'> & {imageUris: ImageUri[]};
 
 const getPosts = async (page = 1): Promise<ResponsePost[]> => {
   const {data} = await axiosInstance.get(`/posts/my?page=${page}`);
+
   return data;
 };
+
+type RequestCreatePost = Omit<Post, 'id'> & {imageUris: ImageUri[]};
 
 const createPost = async (body: RequestCreatePost): Promise<ResponsePost> => {
   const {data} = await axiosInstance.post('/posts', body);
@@ -41,6 +43,7 @@ const updatePost = async ({
   body,
 }: RequestUpdatePost): Promise<ResponseSinglePost> => {
   const {data} = await axiosInstance.patch(`/posts/${id}`, body);
+
   return data;
 };
 
@@ -52,6 +55,17 @@ const getFavoritePosts = async (page = 1): Promise<ResponsePost[]> => {
 
 const updateFavoritePost = async (id: number): Promise<number> => {
   const {data} = await axiosInstance.post(`/favorites/${id}`);
+
+  return data;
+};
+
+const getSearchPosts = async (
+  page = 1,
+  query: string,
+): Promise<ResponsePost[]> => {
+  const {data} = await axiosInstance.get(
+    `/posts/my/search?query=${query}&page=${page}`,
+  );
 
   return data;
 };
@@ -81,6 +95,7 @@ export {
   updatePost,
   updateFavoritePost,
   getFavoritePosts,
+  getSearchPosts,
   getCalendarPosts,
 };
 export type {

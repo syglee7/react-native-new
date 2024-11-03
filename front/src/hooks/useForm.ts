@@ -4,6 +4,7 @@ interface UseFormProps<T> {
   initialValue: T;
   validate: (values: T) => Record<keyof T, string>;
 }
+
 function useForm<T>({initialValue, validate}: UseFormProps<T>) {
   const [values, setValues] = useState(initialValue);
   const [touched, setTouched] = useState<Record<string, boolean>>({});

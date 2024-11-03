@@ -8,16 +8,14 @@ interface LocationState {
   setSelectLocation: (location: LatLng | null) => void;
 }
 
-const useLocationStore = create<LocationState>((set) => ({
+const useLocationStore = create<LocationState>(set => ({
   moveLocation: null,
   selectLocation: null,
   setMoveLocation: (moveLocation: LatLng | null) => {
-    set((state) => ({...state, moveLocation}));
-    //set({moveLocation});
+    set(state => ({...state, moveLocation}));
   },
   setSelectLocation: (selectLocation: LatLng | null) => {
-    set((state) => ({...state, selectLocation}));
-    //set({selectLocation});
+    set(state => ({...state, selectLocation}));
   },
 }));
 

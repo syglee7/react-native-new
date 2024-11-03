@@ -5,7 +5,7 @@ interface LegendState {
   setIsVisible: (isVisible: boolean) => void;
 }
 
-const useLegendStore = create<LegendState>((set) => ({
+const useLegendStore = create<LegendState>(set => ({
   isVisible: false,
   setIsVisible: (isVisible: boolean) => {
     set({isVisible});

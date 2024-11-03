@@ -1,9 +1,11 @@
 import React, {useState} from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
-import FeedItem from '@/components/feed/FeedItem.tsx';
-import useGetInfiniteFavoritePosts from '@/hooks/queries/useGetInfiniteFavoritePosts.ts';
+import FeedItem from './FeedItem';
+import useGetInfiniteFavoritePosts from '@/hooks/queries/useGetInfiniteFavoritePosts';
+import useThemeStore from '@/store/useThemeStore';
 
 function FeedFavoriteList() {
+  const {theme} = useThemeStore();
   const {
     data: posts,
     fetchNextPage,
@@ -24,24 +26,25 @@ function FeedFavoriteList() {
       fetchNextPage();
     }
   };
+
   return (
     <FlatList
       data={posts?.pages.flat()}
       renderItem={({item}) => <FeedItem post={item} />}
       keyExtractor={item => String(item.id)}
+      numColumns={2}
+      contentContainerStyle={styles.contentContainer}
       ListEmptyComponent={
         <View>
           <Text style={{textAlign: 'center'}}>즐겨찾기한 장소가 없습니다.</Text>
         </View>
       }
-      numColumns={2}
-      contentContainerStyle={styles.contentContainer}
       onEndReached={handleEndReached}
       onEndReachedThreshold={0.5}
       refreshing={isRefreshing}
       onRefresh={handleRefresh}
       scrollIndicatorInsets={{right: 1}}
-      indicatorStyle="black"
+      indicatorStyle={theme === 'dark' ? 'white' : 'black'}
     />
   );
 }

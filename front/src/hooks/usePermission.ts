@@ -1,26 +1,26 @@
+import {alerts} from '@/constants';
 import {useEffect} from 'react';
+import {Alert, Linking, Platform} from 'react-native';
 import {
   check,
-  Permission,
-  PERMISSIONS,
   request,
+  PERMISSIONS,
+  Permission,
   RESULTS,
 } from 'react-native-permissions';
-import {Alert, Linking, Platform} from 'react-native';
-import {alerts} from '@/constants';
 
 type PermissionType = 'LOCATION' | 'PHOTO';
 
-type permissionOS = {
+type PermissionOS = {
   [key in PermissionType]: Permission;
 };
 
-const androidPermissions: permissionOS = {
+const androidPermissons: PermissionOS = {
   LOCATION: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
   PHOTO: PERMISSIONS.ANDROID.READ_MEDIA_IMAGES,
 };
 
-const iosPermissions: permissionOS = {
+const iosPermissons: PermissionOS = {
   LOCATION: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
   PHOTO: PERMISSIONS.IOS.PHOTO_LIBRARY,
 };
@@ -29,10 +29,10 @@ function usePermission(type: PermissionType) {
   useEffect(() => {
     (async () => {
       const isAndroid = Platform.OS === 'android';
-      const permissionOS = isAndroid ? androidPermissions : iosPermissions;
+      const permissionOS = isAndroid ? androidPermissons : iosPermissons;
       const checked = await check(permissionOS[type]);
 
-      const showPermissionAlert = () => {
+      const showPermissonAlert = () => {
         Alert.alert(
           alerts[`${type}_PERMISSION`].TITLE,
           alerts[`${type}_PERMISSION`].DESCRIPTION,
@@ -52,20 +52,21 @@ function usePermission(type: PermissionType) {
       switch (checked) {
         case RESULTS.DENIED:
           if (isAndroid) {
-            showPermissionAlert();
+            showPermissonAlert();
             return;
           }
+
           await request(permissionOS[type]);
           break;
         case RESULTS.BLOCKED:
         case RESULTS.LIMITED:
-          showPermissionAlert();
+          showPermissonAlert();
           break;
         default:
           break;
       }
     })();
-  }, [type]);
+  }, []);
 }
 
 export default usePermission;
