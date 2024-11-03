@@ -99,10 +99,11 @@ function useLogout(mutationOptions?: UseMutationCustomOptions) {
     onSuccess: () => {
       removeHeader('Authorization');
       removeEncryptedStorage(storageKeys.REFRESH_TOKEN);
+      queryClient.resetQueries({queryKey: [queryKeys.AUTH]});
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({queryKey: [queryKeys.AUTH]});
-    },
+    // onSettled: () => {
+    //   queryClient.invalidateQueries({queryKey: [queryKeys.AUTH]});
+    // },
     ...mutationOptions,
   });
 }
